@@ -1,0 +1,23 @@
+{
+  "name": "NOR",
+  "version": "0.0.1",
+  "description": "OSC Interface for musical free improvisation in a highly artifical environment",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marmorkuchen-net/NOR"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/marmorkuchen-net/NOR/issues"
+  },
+  "homepage": "https://github.com/marmorkuchen-net/NOR",
+  "dependencies": {
+    "connect": "^3.4.0",
+    "serve-static": "^1.10.0"
+  }
+}
