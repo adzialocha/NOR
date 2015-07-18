@@ -1,12 +1,8 @@
 (function(window, undefined) {
 
-  var NOR = function() {
-    this.message = 'Hello';
-  };
+  var NOR = function() {};
 
-  NOR.prototype.test = function() {
-    return this.message;
-  };
+  NOR.DEFAULT_COLOR = '#00ff22';
 
   window.NOR = window.NOR || NOR;
 
