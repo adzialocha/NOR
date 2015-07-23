@@ -48,9 +48,8 @@
     shouldComponentUpdate: function($nextProps, $nextState) {
       if ($nextState.value != this.state.value) {
         this.props.onValueChanged($nextState.value);
-        return true;
       }
-      return false;
+      return true;
     },
 
     componentWillUnmount: function() {
@@ -74,7 +73,8 @@
       };
 
       return React.DOM.div({ className: 'slider', onTouchStart: this._onChange, onTouchMove: this._onChange },
-        React.DOM.div({ className: 'slider__inner', style: sliderInnerStyle })
+        React.DOM.div({ className: 'slider__inner', style: sliderInnerStyle }),
+        React.DOM.div({ className: 'slider__label' }, React.DOM.p(null, this.state.value))
       );
 
     },

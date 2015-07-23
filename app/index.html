@@ -2,20 +2,53 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <title>NOR</title>
     <link rel="stylesheet" type="text/css" href="styles/reset.css">
     <link rel="stylesheet" type="text/css" href="styles/app.css">
     <link rel="stylesheet" type="text/css" href="styles/slider.css">
+    <link rel="stylesheet" type="text/css" href="styles/toggle.css">
     <script type="text/javascript" src="bower_components/osc-js/dist/osc.js"></script>
     <script type="text/javascript" src="bower_components/react/react.js"></script>
+    <script type="text/javascript" src="scripts/utils.js"></script>
     <script type="text/javascript" src="scripts/NOR.js"></script>
     <script type="text/javascript" src="scripts/slider.jsx.js"></script>
+    <script type="text/javascript" src="scripts/toggle.jsx.js"></script>
     <script type="text/javascript" src="scripts/app.js"></script>
   </head>
   <body onload="app.init()">
     <div class="wrapper">
-      <div class="slider-container" id="slider-compressor"></div>
-      <div class="slider-container" id="slider-bandpass"></div>
+      <div class="view" id="view-controller">
+        <div class="row">
+          <div class="column" id="slider-bandpass"></div>
+        </div>
+        <div class="row">
+          <div class="column" id="toggle-input-a"></div>
+          <div class="column" id="toggle-input-b"></div>
+          <div class="column" id="toggle-compressor"></div>
+          <div class="column" id="toggle-reverb"></div>
+          <div class="column" id="toggle-random"></div>
+        </div>
+      </div>
+      <div class="view" id="view-setup">
+        <h1>NOR</h1>
+        <p>PARTICIPANT ID</p>
+        <input type="text" id="participant-id" value="1">
+        <p>SERVER ADDRESS</p>
+        <input type="text" id="server-address" value="192.168.178.21">
+        <p>SERVER PORT</p>
+        <input type="text" id="server-port" value="9000">
+        <p>STATUS</p>
+        <p id="status" class="status"></p>
+        <button id="connect">Connect</button>
+      </div>
     </div>
+    <script>
+      document.body.addEventListener('touchmove', function($event) {
+        $event.preventDefault(); /* ios momentum scroll hack */
+      }, false);
+    </script>
   </body>
 </html>
