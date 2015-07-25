@@ -19,6 +19,11 @@
 
   var _id;
 
+  var _frequency = {
+    min: 0,
+    max: 0
+  };
+
   var _callback = {
     status: NOOP,
     frequency: NOOP
@@ -35,11 +40,20 @@
 
   var _randomMode, _randomFrequency;
 
+  function _convert(nVal) {
+    if (typeof nVal !== 'boolean') {
+      return (Math.log(nVal) - Math.log(_frequency.min)) / (Math.log(_frequency.max) - Math.log(_frequency.min));
+    } else {
+      return nVal? 1.0 : 0.0;
+    }
+
+  }
+
   function _informServer(nControllerKey) {
     var message = new OSC.Message(
       OSC_ADDRESS,
-      _id * OSC_CONTROLLER_IDS[nControllerKey],
-      _.boolToFloat(_controller[nControllerKey])
+      (_id * Object.keys(OSC_CONTROLLER_IDS).length) + OSC_CONTROLLER_IDS[nControllerKey],
+      _convert(_controller[nControllerKey])
     );
     _osc.send(message);
   }
@@ -68,7 +82,11 @@
 
   // public
 
-  var NOR = function() {
+  var NOR = function(nMinFrequency, nMaxFrequency) {
+
+    if (typeof nMinFrequency !== 'number' || typeof nMaxFrequency !== 'number') {
+      return false;
+    }
 
     _osc = new OSC();
 
@@ -92,6 +110,9 @@
 
     _randomFrequency = 0;
     _randomMode = false;
+
+    _frequency.min = nMinFrequency;
+    _frequency.max = nMaxFrequency;
 
   };
 
@@ -125,7 +146,7 @@
 
   NOR.prototype.connect = function(nId, nAddress, nPort) {
 
-    if (! nId || ! nAddress || ! nPort) {
+    if (typeof nId !== 'number' || ! nAddress || ! nPort) {
       return false;
     }
 
@@ -147,12 +168,21 @@
   };
 
   NOR.prototype.setBandpass = function(nMinFrequency, nMaxFrequency) {
+
     if (typeof nMinFrequency !== 'number' || typeof nMaxFrequency !== 'number') {
       return false;
     }
+
+
+    if (nMinFrequency < _frequency.min || nMaxFrequency > _frequency.max) {
+      return false;
+    }
+
     _setController('bandpassMin', nMinFrequency);
     _setController('bandpassMax', nMaxFrequency);
+
     return true;
+
   };
 
   NOR.prototype.setCompressor = function(nStatus) {

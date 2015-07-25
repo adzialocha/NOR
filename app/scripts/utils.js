@@ -31,14 +31,6 @@
     return Math.round(Math.random() * (uMaxValue - uMinValue) + uMinValue);
   };
 
-  _.boolToFloat = function(uBool) {
-    if (typeof uBool !== 'boolean') {
-      return uBool;
-    } else {
-      return uBool? 1.0 : 0.0;
-    }
-  };
-
   window._ = window._ || _;
 
 })(window);

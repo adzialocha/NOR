@@ -10,8 +10,8 @@
       'connect'
     ];
 
-  var MIN_FREQUENCY_RANGE = 20;
-  var MAX_FREQUENCY_RANGE = 20000;
+  var MIN_FREQUENCY_RANGE = 30;
+  var MAX_FREQUENCY_RANGE = 22000;
 
   // private
 
@@ -89,7 +89,7 @@
 
     var firstViewId;
 
-    _nor = new NOR();
+    _nor = new NOR(MIN_FREQUENCY_RANGE, MAX_FREQUENCY_RANGE);
 
     _nor.onStatusChange(function(nStatus) {
 

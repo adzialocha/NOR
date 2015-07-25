@@ -17,8 +17,8 @@ var HTTP_SERVER_PORT = 8080;
 
 var WEBSOCKET_SERVER_PORT = 9000;
 
-var UDP_TARGET_SERVER_ADDRESS = '192.168.0.1';
-var UDP_TARGET_SERVER_PORT = 7400;
+var UDP_TARGET_SERVER_ADDRESS = '192.168.178.52';
+var UDP_TARGET_SERVER_PORT = 7500;
 
 var websocketServer, udpClient;
 
@@ -123,17 +123,12 @@ udpClient.on('error', function(rError) {
 });
 
 function sendToUdpServer(sMessage) {
-
-  var message;
-  message = new Buffer(sMessage);
-
-  udpClient.send(message, 0, message.length, UDP_TARGET_SERVER_PORT, UDP_TARGET_SERVER_ADDRESS, function(rError) {
+  udpClient.send(sMessage, 0, sMessage.length, UDP_TARGET_SERVER_PORT, UDP_TARGET_SERVER_ADDRESS, function(rError) {
         if (rError) {
           _log('UDP ERROR (' + rError + ')');
         }
       }
   );
-
 }
 
 // go
