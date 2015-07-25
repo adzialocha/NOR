@@ -10,6 +10,8 @@ NOR
 
 Interface for musical free improvisation in a highly artifical environment, using [osc-js](https://github.com/marmorkuchen-net/osc-js) to communicate to Ableton Live and [React](https://facebook.github.io/react/) for UI.
 
+![NOR](https://github.com/marmorkuchen-net/NOR/blob/master/NOR.gif)
+
 ### Requirements
 
 * bower
