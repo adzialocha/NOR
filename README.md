@@ -18,7 +18,7 @@ Interface for musical free improvisation in a highly artifical environment, usin
 ### Install
 
 ```
-git clone git@github.com:marmorkuchen-net/osc-js.git
+git clone git@github.com:marmorkuchen-net/NOR.git
 cd NOR
 bower install && npm install
 ```
