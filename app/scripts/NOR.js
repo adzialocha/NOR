@@ -38,7 +38,7 @@
   function _informServer(nControllerKey) {
     var message = new OSC.Message(
       OSC_ADDRESS,
-      OSC_CONTROLLER_IDS[nControllerKey],
+      _id * OSC_CONTROLLER_IDS[nControllerKey],
       _.boolToFloat(_controller[nControllerKey])
     );
     _osc.send(message);

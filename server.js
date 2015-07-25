@@ -136,7 +136,11 @@ function sendToUdpServer(sMessage) {
 
 }
 
-// http server
+// go
+
+_log('NOR #1');
+
+// start http server
 
 connect().use(serveStatic(__dirname + '/' + STATIC_FOLDER)).listen(HTTP_SERVER_PORT);
 
@@ -144,8 +148,6 @@ connect().use(serveStatic(__dirname + '/' + STATIC_FOLDER)).listen(HTTP_SERVER_P
 
 setNewFrequency();
 
-// set values
+// set initial values
 
 sessionUserCounter = 0;
-
-_log('NOR #1');

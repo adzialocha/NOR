@@ -151,14 +151,12 @@
     _bandpass = React.render(React.createElement(NOR.Component.Slider, {
       min: MIN_FREQUENCY_RANGE,
       max: MAX_FREQUENCY_RANGE,
-      steps: 1,
       onValueChanged: function(cFromValue, cToValue) {
         _nor.setBandpass(cFromValue, cToValue);
       }
     }), document.getElementById('slider-bandpass'));
 
     _inputA = React.render(React.createElement(NOR.Component.Toggle, {
-      initialValue: true,
       label: 'IN A',
       backgroundColor: NOR.BLUE,
       onValueChanged: function(cStatus) {
