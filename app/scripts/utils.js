@@ -4,26 +4,38 @@
 
   var _ = {};
 
-  _.hasClass = function($element, className) {
-    return !! $element.className.match(new RegExp('(\\s|^)' + className + '(\\s|$)'));
+  _.hasClass = function($element, uClassName) {
+    return !! $element.className.match(new RegExp('(\\s|^)' + uClassName + '(\\s|$)'));
   };
 
-  _.addClass = function($element, className) {
-    if (! _.hasClass($element, className)) $element.className += ' ' + className;
+  _.addClass = function($element, uClassName) {
+    if (! _.hasClass($element, uClassName)) $element.className += ' ' + uClassName;
   };
 
-  _.removeClass = function($element, className) {
-    if (_.hasClass($element, className)) {
-      var reg = new RegExp('(\\s|^)' + className + '(\\s|$)');
+  _.removeClass = function($element, uClassName) {
+    if (_.hasClass($element, uClassName)) {
+      var reg = new RegExp('(\\s|^)' + uClassName + '(\\s|$)');
       $element.className = $element.className.replace(reg, '');
     }
   };
 
-  _.toggleClass = function($element, className) {
-    if (_.hasClass($element, className)) {
-      _.removeClass($element, className);
+  _.toggleClass = function($element, uClassName) {
+    if (_.hasClass($element, uClassName)) {
+      _.removeClass($element, uClassName);
     } else {
-      _.addClass($element, className);
+      _.addClass($element, uClassName);
+    }
+  };
+
+  _.random = function(uMinValue, uMaxValue) {
+    return Math.round(Math.random() * (uMaxValue - uMinValue) + uMinValue);
+  };
+
+  _.boolToFloat = function(uBool) {
+    if (typeof uBool !== 'boolean') {
+      return uBool;
+    } else {
+      return uBool? 1.0 : 0.0;
     }
   };
 

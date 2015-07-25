@@ -2,13 +2,24 @@
 
   var STATUS_ERROR_CLASS = 'status--error';
   var STATUS_POSITIVE_CLASS = 'status--positive';
-  var UI_ELEMENT_IDS = [ 'server-address', 'server-port', 'participant-id', 'connect' ];
+
+  var UI_ELEMENT_IDS = [
+      'server-address',
+      'server-port',
+      'participant-id',
+      'connect'
+    ];
+
+  var MIN_FREQUENCY_RANGE = 20;
+  var MAX_FREQUENCY_RANGE = 20000;
 
   // private
 
   var _nor;
 
   var _bandpass, _compressor, _inputA, _inputB, _reverb, _random;
+
+  var _randomModeStatus, _randomTimeout, _randomFrequency;
 
   function _setStatus(sMessage, sClass) {
 
@@ -32,6 +43,44 @@
     });
   }
 
+  // random mode
+
+  function _doChaos() {
+
+    var randComponent;
+    var randMin;
+
+    randComponent = Math.round(Math.random() * 4);
+
+    if (randComponent === 0) {
+      randMin = _.random(MIN_FREQUENCY_RANGE, MAX_FREQUENCY_RANGE);
+      _bandpass.setState({
+        valueMin: randMin,
+        valueMax: _.random(randMin, MAX_FREQUENCY_RANGE)
+      });
+    } else if (randComponent === 1) {
+      _inputA.setState({ value: ! _inputA.state.value });
+    } else if (randComponent === 2) {
+      _inputB.setState({ value: ! _inputB.state.value });
+    } else if (randComponent === 3) {
+      _compressor.setState({ value: ! _compressor.state.value });
+    }
+
+  }
+
+  function _resetRandomStep() {
+    if (_randomTimeout) {
+      window.clearTimeout(_randomTimeout);
+    }
+  }
+
+  function _nextRandomStep() {
+    if (_randomModeStatus && _nor.isConnected()) {
+      _doChaos();
+      _randomTimeout = window.setTimeout(_nextRandomStep, _randomFrequency);
+    }
+  }
+
   // public
 
   var app = {};
@@ -46,32 +95,50 @@
 
       var message, type;
 
-      switch(nStatus) {
+      if (nStatus === NOR.SERVER_ERROR) {
 
-        case NOR.SERVER_ERROR:
-          type = STATUS_ERROR_CLASS;
-          message = 'ERROR';
-          _setUIAvailability(true);
-          break;
+        type = STATUS_ERROR_CLASS;
+        message = 'ERROR';
+        _setUIAvailability(true);
 
-        case NOR.SERVER_DISCONNECTED:
-          type = STATUS_ERROR_CLASS;
-          message = 'OFFLINE';
-          _setUIAvailability(true);
-          break;
+      } else if (nStatus === NOR.SERVER_DISCONNECTED) {
 
-        case NOR.SERVER_CONNECTED:
-          type = STATUS_POSITIVE_CLASS;
-          message = 'ONLINE';
-          _setUIAvailability(false);
-          break;
+        type = STATUS_ERROR_CLASS;
+        message = 'OFFLINE';
+        _setUIAvailability(true);
 
-        default:
-          message = 'CONNECTING';
+      } else if (nStatus === NOR.SERVER_CONNECTED) {
 
+        type = STATUS_POSITIVE_CLASS;
+        message = 'ONLINE';
+        _setUIAvailability(false);
+
+        if (_randomModeStatus) {
+          _nextRandomStep();
+        }
+
+      } else {
+        message = 'CONNECTING';
       }
 
       _setStatus(message, type);
+
+    });
+
+    _randomFrequency = 0;
+
+    _nor.onFrequencyChange(function(nFrequency) {
+
+      _randomFrequency = nFrequency;
+      _random.setProps({
+        label: 'CHAOS [' + nFrequency + ']',
+        initialValue: _random.state.value
+      });
+
+      if (_randomModeStatus) {
+        _resetRandomStep()
+        _nextRandomStep();
+      }
 
     });
 
@@ -82,9 +149,9 @@
     // components
 
     _bandpass = React.render(React.createElement(NOR.Component.Slider, {
-      min: 50,
-      max: 100,
-      steps: 10,
+      min: MIN_FREQUENCY_RANGE,
+      max: MAX_FREQUENCY_RANGE,
+      steps: 1,
       onValueChanged: function(cFromValue, cToValue) {
         _nor.setBandpass(cFromValue, cToValue);
       }
@@ -122,7 +189,13 @@
     _random = React.render(React.createElement(NOR.Component.Toggle, {
       label: 'CHAOS',
       backgroundColor: NOR.RED,
-      onValueChanged: _nor.setRandom,
+      onValueChanged: function(cStatus) {
+        _nor.setRandom(cStatus);
+        _randomModeStatus = cStatus;
+        if (cStatus) {
+          _nextRandomStep();
+        }
+      },
     }), document.getElementById('toggle-random'));
 
     // initial status

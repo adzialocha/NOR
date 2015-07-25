@@ -3,10 +3,12 @@
   var OSC_ADDRESS = 'param';
 
   var OSC_CONTROLLER_IDS = {
-    bandpass: 0,
-    inputs: 1,
-    compressor: 2,
-    reverb: 3
+    bandpassMin: 0,
+    bandpassMax: 1,
+    inputA: 2,
+    inputB: 3,
+    compressor: 4,
+    reverb: 5
   };
 
   var NOOP = function() { return false; };
@@ -18,21 +20,34 @@
   var _id;
 
   var _callback = {
-    status: NOOP
+    status: NOOP,
+    frequency: NOOP
   };
 
   var _controller = {
-    bandpass: [0, 0],
-    inputs: [false, false],
+    bandpassMin: 0,
+    bandpassMax: 0,
+    inputA: false,
+    inputB: false,
     compressor: false,
     reverb: false
   };
 
-  var _randomMode;
+  var _randomMode, _randomFrequency;
 
-  function _informServer() {
-    var message = new OSC.Message(OSC_ADDRESS);
+  function _informServer(nControllerKey) {
+    var message = new OSC.Message(
+      OSC_ADDRESS,
+      OSC_CONTROLLER_IDS[nControllerKey],
+      _.boolToFloat(_controller[nControllerKey])
+    );
     _osc.send(message);
+  }
+
+  function _informServerAll() {
+    Object.keys(OSC_CONTROLLER_IDS).forEach(function(eItem) {
+      _informServer(eItem);
+    });
   }
 
   function _setStatus(nStatus) {
@@ -47,7 +62,7 @@
   function _setController(nKey, nValue) {
     _controller[nKey] = nValue;
     if (_status === NOR.SERVER_CONNECTED) {
-      _informServer();
+      _informServer(nKey);
     }
   }
 
@@ -59,7 +74,7 @@
 
     _osc.on('open', function(cEvent) {
       _setStatus(NOR.SERVER_CONNECTED);
-      _informServer();
+      _informServerAll();
     });
 
     _osc.on('close', function(cEvent) {
@@ -70,6 +85,12 @@
       _setStatus(NOR.SERVER_ERROR);
     });
 
+    _osc.on('/frequency', function(cData) {
+      _randomFrequency = cData.args[0];
+      _callback.frequency(_randomFrequency);
+    });
+
+    _randomFrequency = 0;
     _randomMode = false;
 
   };
@@ -94,6 +115,14 @@
     return true;
   };
 
+  NOR.prototype.onFrequencyChange = function(nCallback) {
+    if (! nCallback || typeof nCallback !== 'function') {
+      return false;
+    }
+    _callback.frequency = nCallback;
+    return true;
+  };
+
   NOR.prototype.connect = function(nId, nAddress, nPort) {
 
     if (! nId || ! nAddress || ! nPort) {
@@ -113,11 +142,16 @@
 
   };
 
+  NOR.prototype.isConnected = function() {
+    return _status === NOR.SERVER_CONNECTED;
+  };
+
   NOR.prototype.setBandpass = function(nMinFrequency, nMaxFrequency) {
-    if (typeof nMinFrequency !== 'number' || ! typeof nMaxFrequency !== 'number') {
+    if (typeof nMinFrequency !== 'number' || typeof nMaxFrequency !== 'number') {
       return false;
     }
-    _setController('bandpass', [nMinFrequency, nMaxFrequency]);
+    _setController('bandpassMin', nMinFrequency);
+    _setController('bandpassMax', nMaxFrequency);
     return true;
   };
 
@@ -146,15 +180,21 @@
   };
 
   NOR.prototype.setInput = function(nIndex, nStatus) {
+
     if (typeof nIndex !== 'number' || typeof nStatus !== 'boolean') {
       return false;
     }
-    if (_controller.inputs.length - 1 < nIndex) {
-      return false;
+
+    if (nIndex === 0) {
+      _setController('inputA', nStatus);
+      return true;
+    } else if (nIndex === 1) {
+      _setController('inputB', nStatus);
+      return true;
     }
-    _controller.inputs[nIndex] = nStatus;
-    _setController('inputs', _controller.inputs);
-    return true;
+
+    return false;
+
   };
 
 
