@@ -7,8 +7,8 @@ var osc = require('osc-min');
 
 var MINUTE_IN_MS = 60000;
 
-var RANDOM_MIN = 40;
-var RANDOM_MAX = 5000;
+var RANDOM_VALUES = [ 25, 50, 100, 200, 250, 400, 800, 1600, 2500, 3000, 5000 ];
+
 var RANDOM_TIMER_MIN = 1000;
 var RANDOM_TIMER_MAX = MINUTE_IN_MS;
 
@@ -51,6 +51,10 @@ function _log(sMessage) {
 
 // random frequency
 
+function getRandomFromArray(sArray) {
+  return sArray[Math.floor(Math.random() * sArray.length)];
+}
+
 function getRandom(sMin, sMax) {
   return Math.round(Math.random() * (sMax - sMin) + sMin);
 }
@@ -69,12 +73,18 @@ function broadcastFrequency(sFrequency) {
 }
 
 function setNewFrequency() {
+
   var nextFrequency;
-  nextFrequency = getRandom(RANDOM_MIN, RANDOM_MAX);
+
+  nextFrequency = getRandomFromArray(RANDOM_VALUES);
+
   currentFrequency = nextFrequency;
   broadcastFrequency(nextFrequency);
+
   _log('SET FREQUENCY TO ' + nextFrequency);
+
   setTimeout(setNewFrequency, getRandom(RANDOM_TIMER_MIN, RANDOM_TIMER_MAX));
+
 }
 
 // websocket server
