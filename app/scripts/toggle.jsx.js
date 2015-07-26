@@ -1,4 +1,6 @@
-(function(window, NOR, undefined) {
+(function(window, NOR, React, undefined) {
+
+  'use strict';
 
   NOR.Component = NOR.Component || {};
 
@@ -28,7 +30,7 @@
         value: 0,
         offset: 0,
         width: 0
-      }
+      };
     },
 
     componentDidMount: function() {
@@ -73,7 +75,7 @@
 
     /* private */
 
-    _onToggle: function($event) {
+    _onToggle: function() {
       this.setState({ value: ! this.state.value });
     },
 
@@ -86,4 +88,4 @@
 
   });
 
-})(window, window.NOR);
+})(window, window.NOR, window.React);

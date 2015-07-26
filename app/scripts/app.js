@@ -1,5 +1,7 @@
 (function(window, _, React, NOR, undefined) {
 
+  'use strict';
+
   var STATUS_ERROR_CLASS = 'status--error';
   var STATUS_POSITIVE_CLASS = 'status--positive';
 
@@ -87,8 +89,6 @@
 
   app.init = function() {
 
-    var firstViewId;
-
     _nor = new NOR(MIN_FREQUENCY_RANGE, MAX_FREQUENCY_RANGE);
 
     _nor.onStatusChange(function(nStatus) {
@@ -130,13 +130,14 @@
     _nor.onFrequencyChange(function(nFrequency) {
 
       _randomFrequency = nFrequency;
+
       _random.setProps({
         label: 'CHAOS [' + nFrequency + ']',
         initialValue: _random.state.value
       });
 
       if (_randomModeStatus) {
-        _resetRandomStep()
+        _resetRandomStep();
         _nextRandomStep();
       }
 
@@ -146,7 +147,7 @@
 
     React.initializeTouchEvents(true);
 
-    // components
+    // slider component
 
     _bandpass = React.render(React.createElement(NOR.Component.Slider, {
       min: MIN_FREQUENCY_RANGE,
@@ -155,6 +156,8 @@
         _nor.setBandpass(cFromValue, cToValue);
       }
     }), document.getElementById('slider-bandpass'));
+
+    // toggle components
 
     _inputA = React.render(React.createElement(NOR.Component.Toggle, {
       label: 'IN A',
@@ -184,11 +187,12 @@
       onValueChanged: _nor.setReverb,
     }), document.getElementById('toggle-reverb'));
 
+    // random component
+
     _random = React.render(React.createElement(NOR.Component.Toggle, {
       label: 'CHAOS',
       backgroundColor: NOR.RED,
       onValueChanged: function(cStatus) {
-        _nor.setRandom(cStatus);
         _randomModeStatus = cStatus;
         if (cStatus) {
           _nextRandomStep();
@@ -207,8 +211,8 @@
       var address, port, id;
 
       address = document.getElementById('server-address').value;
-      port = parseInt(document.getElementById('server-port').value, 10)
-      id = parseInt(document.getElementById('participant-id').value, 10)
+      port = parseInt(document.getElementById('server-port').value, 10);
+      id = parseInt(document.getElementById('participant-id').value, 10);
 
       _nor.connect(id, address, port);
 
@@ -220,4 +224,4 @@
 
   window.app = window.app || app;
 
-})(window, window._, window.React, window.NOR);
+}(window, window._, window.React, window.NOR));

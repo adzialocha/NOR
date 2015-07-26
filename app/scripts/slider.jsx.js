@@ -1,4 +1,6 @@
-(function(window, NOR, undefined) {
+(function(window, NOR, React, undefined) {
+
+  'use strict';
 
   NOR.Component = NOR.Component || {};
 
@@ -37,7 +39,7 @@
         valueMax: 0,
         offset: 0,
         width: 0
-      }
+      };
     },
 
     componentDidMount: function() {
@@ -250,7 +252,7 @@
 
     },
 
-    _onTouchEnd: function($event) {
+    _onTouchEnd: function() {
       this._currentTouch.isActive = false;
     },
 
@@ -263,4 +265,4 @@
 
   });
 
-})(window, window.NOR);
+}(window, window.NOR, window.React));

@@ -1,5 +1,7 @@
 (function(window, OSC, undefined) {
 
+  'use strict';
+
   var OSC_ADDRESS = 'param';
 
   var OSC_CONTROLLER_IDS = {
@@ -38,7 +40,7 @@
     reverb: false
   };
 
-  var _randomMode, _randomFrequency;
+  var _randomFrequency;
 
   function _convert(nVal) {
     if (typeof nVal !== 'boolean') {
@@ -46,7 +48,6 @@
     } else {
       return nVal? 1.0 : 0.0;
     }
-
   }
 
   function _informServer(nControllerKey) {
@@ -69,10 +70,6 @@
     _callback.status(nStatus);
   }
 
-  function _setRandomMode(nStatus) {
-    _randomMode = nStatus;
-  }
-
   function _setController(nKey, nValue) {
     _controller[nKey] = nValue;
     if (_status === NOR.SERVER_CONNECTED) {
@@ -90,16 +87,16 @@
 
     _osc = new OSC();
 
-    _osc.on('open', function(cEvent) {
+    _osc.on('open', function() {
       _setStatus(NOR.SERVER_CONNECTED);
       _informServerAll();
     });
 
-    _osc.on('close', function(cEvent) {
+    _osc.on('close', function() {
       _setStatus(NOR.SERVER_DISCONNECTED);
     });
 
-    _osc.on('error', function(cEvent) {
+    _osc.on('error', function() {
       _setStatus(NOR.SERVER_ERROR);
     });
 
@@ -109,7 +106,6 @@
     });
 
     _randomFrequency = 0;
-    _randomMode = false;
 
     _frequency.min = nMinFrequency;
     _frequency.max = nMaxFrequency;
@@ -201,14 +197,6 @@
     return true;
   };
 
-  NOR.prototype.setRandom = function(nStatus) {
-    if (typeof nStatus !== 'boolean') {
-      return false;
-    }
-    _setRandomMode(nStatus);
-    return true;
-  };
-
   NOR.prototype.setInput = function(nIndex, nStatus) {
 
     if (typeof nIndex !== 'number' || typeof nStatus !== 'boolean') {
@@ -221,13 +209,12 @@
     } else if (nIndex === 1) {
       _setController('inputB', nStatus);
       return true;
+    } else {
+      return false;
     }
-
-    return false;
 
   };
 
-
   window.NOR = window.NOR || NOR;
 
-})(window, window.OSC);
+}(window, window.OSC));

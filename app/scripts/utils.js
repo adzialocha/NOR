@@ -1,5 +1,7 @@
 (function(window, undefined) {
 
+  'use strict';
+
   // public
 
   var _ = {};
@@ -33,4 +35,4 @@
 
   window._ = window._ || _;
 
-})(window);
+}(window));
