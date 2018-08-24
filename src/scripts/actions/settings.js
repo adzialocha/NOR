@@ -9,7 +9,7 @@ export function loadSettings() {
 export function saveNetworkSettings(settings) {
   return {
     settings,
-    type: ActionTypes.SETTINGS_NETWORK_SAVE,
+    type: ActionTypes.SETTINGS_SAVE,
   };
 };
 

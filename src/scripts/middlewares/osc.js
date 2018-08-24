@@ -1,13 +1,11 @@
 import OSC from 'osc-js';
 
-import AbletonSetup from '../services/ableton-setup';
 import ActionTypes from '../actionTypes';
+import { changeController } from '../actions/controller';
+import { changeSession } from '../actions/session';
+import { send } from '../actions/osc';
 
 const osc = new OSC();
-
-const abletonSetup = new AbletonSetup({
-  osc,
-});
 
 export const OSC_ACTION = Symbol('osc-middleware-action');
 export const OSC_SEND = Symbol('osc-middleware-send');
@@ -17,6 +15,10 @@ function registerEventHandlers(store) {
     store.dispatch({
       type: ActionTypes.OSC_OPEN,
     });
+
+    const state = store.getState();
+    const id = state.settings.id;
+    store.dispatch(send('handshake', id));
   });
 
   osc.on('close', () => {
@@ -34,20 +36,18 @@ function registerEventHandlers(store) {
 }
 
 function registerMessageHandlers(store) {
-  osc.on('/status', message => {
-    store.dispatch({
-      cuePointCount: message.args[3],
-      isCuePointSelected: message.args[0] === 1,
-      isPlaying: message.args[1] === 1,
-      isRecording: message.args[2] === 1,
-      type: ActionTypes.TRANSPORT_STATUS_RECEIVED,
-    });
+  osc.on('/session', message => {
+    store.dispatch(changeSession(message.args));
+  });
+
+  osc.on('/controller', message => {
+    store.dispatch(changeController(message.args));
   });
 }
 
 function handleAction(store, type) {
   const state = store.getState();
-  const { host, port } = state.settings.network;
+  const { host, port } = state.settings;
 
   if (type === 'init') {
     registerEventHandlers(store);
@@ -58,28 +58,19 @@ function handleAction(store, type) {
     });
   } else if (type === 'open') {
     if (!state.osc.isOpen) {
+      if (!state.settings.id) {
+        store.dispatch({
+          type: ActionTypes.OSC_ERROR,
+          error: 'Please enter your ID',
+        });
+        return;
+      }
       osc.open({ host, port });
     }
   } else if (type === 'close') {
     if (state.osc.isOpen) {
       osc.close();
     }
-  } else if (type === 'setup') {
-    if (abletonSetup.isLoading) {
-      return;
-    }
-
-    store.dispatch({
-      type: ActionTypes.SETUP_UPDATE_BEGIN,
-    });
-
-    abletonSetup.load()
-      .then(setup => {
-        store.dispatch({
-          setup,
-          type: ActionTypes.SETUP_UPDATE_END,
-        });
-      });
   }
 }
 

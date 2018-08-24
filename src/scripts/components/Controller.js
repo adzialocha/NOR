@@ -7,7 +7,7 @@ import { changeValues, toggleStatus } from '../actions/controller';
 
 class Controller extends Component {
   static propTypes = {
-    status: PropTypes.shape({
+    controls: PropTypes.shape({
       chaos: PropTypes.bool.isRequired,
       compressor: PropTypes.bool.isRequired,
       microphoneA: PropTypes.bool.isRequired,
@@ -16,6 +16,10 @@ class Controller extends Component {
       eq: PropTypes.array.isRequired,
     }).isRequired,
     changeValues: PropTypes.func.isRequired,
+    chaosRate: PropTypes.number.isRequired,
+    isDisabled: PropTypes.bool.isRequired,
+    isRainbowMode: PropTypes.bool.isRequired,
+    isTakeoverActive: PropTypes.bool.isRequired,
     toggleStatus: PropTypes.func.isRequired,
   }
 
@@ -28,11 +32,20 @@ class Controller extends Component {
   }
 
   render() {
+    const chaosColor = this.props.isRainbowMode ? 'rainbow' : 'red';
+    let chaosLabel = this.props.isRainbowMode ? 'TAKEOVER' : 'CHAOS';
+
+    if (this.props.chaosRate) {
+      chaosLabel += ' ' + this.props.chaosRate;
+    }
+
     return (
       <div className='controller'>
         <div className='controller__primary'>
           <Equalizer
-            values={this.props.status.eq}
+            values={this.props.controls.eq}
+            disabled={this.props.isDisabled || this.props.isTakeoverActive}
+            takeoverMode={this.props.isTakeoverActive}
             onChanged={this.onEqualizerChanged}
           />
         </div>
@@ -40,44 +53,49 @@ class Controller extends Component {
         <div className='controller__secondary'>
           <ToggleButton
             className='controller__toggle-button'
+            disabled={this.props.isDisabled}
             id='microphoneA'
-            isActive={this.props.status.microphoneA}
+            isActive={this.props.controls.microphoneA}
             label='IN 1'
             onClicked={this.onToggleClicked}
           />
 
           <ToggleButton
             className='controller__toggle-button'
+            disabled={this.props.isDisabled}
             id='microphoneB'
-            isActive={this.props.status.microphoneB}
+            isActive={this.props.controls.microphoneB}
             label='IN 2'
             onClicked={this.onToggleClicked}
           />
 
           <ToggleButton
             className='controller__toggle-button'
+            disabled={this.props.isDisabled}
             id='compressor'
             color='yellow'
-            isActive={this.props.status.compressor}
+            isActive={this.props.controls.compressor}
             label='CMP'
             onClicked={this.onToggleClicked}
           />
 
           <ToggleButton
             className='controller__toggle-button'
+            disabled={this.props.isDisabled}
             id='reverb'
             color='yellow'
-            isActive={this.props.status.reverb}
+            isActive={this.props.controls.reverb}
             label='RVB'
             onClicked={this.onToggleClicked}
           />
 
           <ToggleButton
             className='controller__toggle-button'
+            disabled={this.props.isDisabled}
             id='chaos'
-            color='red'
-            isActive={this.props.status.chaos}
-            label='CHAOS'
+            color={chaosColor}
+            isActive={this.props.controls.chaos}
+            label={chaosLabel}
             onClicked={this.onToggleClicked}
           />
         </div>
@@ -94,8 +112,18 @@ class Controller extends Component {
 }
 
 function mapStateToProps(state) {
+  const {
+    chaosRate,
+    isRainbowMode,
+    isTakeoverActive,
+  } = state.session;
+
   return {
-    status: state.controller,
+    chaosRate,
+    controls: state.controller,
+    isDisabled: !state.osc.isOpen,
+    isRainbowMode,
+    isTakeoverActive,
   };
 }
 

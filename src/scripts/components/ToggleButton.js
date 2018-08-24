@@ -6,6 +6,7 @@ class ToggleButton extends Component {
   static propTypes = {
     color: PropTypes.string,
     className: PropTypes.string,
+    disabled: PropTypes.bool.isRequired,
     id: PropTypes.string.isRequired,
     isActive: PropTypes.bool.isRequired,
     label: PropTypes.string.isRequired,
@@ -25,6 +26,7 @@ class ToggleButton extends Component {
     return (
       <button
         className={className}
+        disabled={this.props.disabled}
         onClick={this.onClicked}
       >
         { this.props.label }

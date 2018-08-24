@@ -6,10 +6,9 @@ import { getItem, setItem, hasItem } from '../services/storage';
 const STORAGE_KEY = 'settings';
 
 const initialState = {
-  network: {
-    host: 'localhost',
-    port: 9789,
-  },
+  host: 'localhost',
+  port: 9789,
+  id: '',
 };
 
 function updateStorage(state) {
@@ -19,11 +18,9 @@ function updateStorage(state) {
 
 export default function settings(state = initialState, action) {
   switch (action.type) {
-    case ActionTypes.SETTINGS_NETWORK_SAVE:
+    case ActionTypes.SETTINGS_SAVE:
       return updateStorage(
-        update(state, {
-          network: { $set: action.settings },
-        })
+        update(state, { $set: action.settings }),
       );
     case ActionTypes.SETTINGS_LOAD:
       if (hasItem(STORAGE_KEY)) {

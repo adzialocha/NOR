@@ -89,6 +89,25 @@ class Settings extends Component {
           />
         </div>
 
+        <div className='form__group'>
+          <label
+            className='form__label'
+            htmlFor='id'
+          >
+            Participant ID
+          </label>
+
+          <input
+            className='form__input'
+            disabled={this.props.isOpen}
+            id='id'
+            name='id'
+            type='text'
+            value={this.props.settings.id}
+            onChange={this.onValueChanged}
+          />
+        </div>
+
         <div className='form__actions'>
           <div className='button-group'>
             <button
@@ -151,7 +170,7 @@ function mapStateToProps(state) {
     errorMessage: state.osc.errorMessage,
     isError: state.osc.isError,
     isOpen: state.osc.isOpen,
-    settings: state.settings.network,
+    settings: state.settings,
   };
 }
 

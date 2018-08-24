@@ -26,11 +26,11 @@ function updateValues(state, start, end, newValue) {
   });
 }
 
-export default function editor(state = initialState, action) {
+export default function controller(state = initialState, action) {
   switch (action.type) {
-    case ActionTypes.CONTROLLER_TOGGLE_STATUS:
+    case ActionTypes.CONTROLLER_SET_STATUS:
       return update(state, {
-        [action.name]: { $set: !state[action.name] },
+        [action.name]: { $set: action.value },
       });
     case ActionTypes.CONTROLLER_CHANGE_VALUES:
       return updateValues(state, action.start, action.end, action.value);

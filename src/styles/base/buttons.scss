@@ -1,3 +1,10 @@
+@keyframes rainbow {
+  0% { background-color: $blue; }
+  33% { background-color: $green; }
+  66% { background-color: $blue; }
+  100% { background-color: $red; }
+}
+
 .button,
 button,
 input[type="button"],
@@ -45,6 +52,20 @@ input[type="submit"] {
 .button--green {
   &.button--active {
     background-color: $green;
+  }
+}
+
+.button--rainbow {
+  animation-name: rainbow;
+  animation-duration: 5s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+
+  opacity: .5;
+
+  &.button--active {
+    opacity: 1;
   }
 }
 

@@ -10,7 +10,7 @@ const initialState = {
 
 export default function view(state = initialState, action) {
   switch (action.type) {
-    case ActionTypes.ORIENTATION_CHANGE:
+    case ActionTypes.VIEW_ORIENTATION_CHANGE:
       return update(state, {
         currentOrientation: { $set: action.name },
       });

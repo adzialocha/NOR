@@ -1,11 +1,13 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import classnames from 'classnames';
 
 import { EQ_BIN_NUM } from '../reducers/controller';
 import { EqualizerValue } from './';
 
 class Equalizer extends Component {
   static propTypes = {
+    disabled: PropTypes.bool.isRequired,
     onChanged: PropTypes.func.isRequired,
     values: PropTypes.array.isRequired,
   }
@@ -15,7 +17,7 @@ class Equalizer extends Component {
   }
 
   onChanged(event) {
-    if (!this.state.isActive) {
+    if (!this.state.isActive || this.props.disabled) {
       return;
     }
 
@@ -47,6 +49,10 @@ class Equalizer extends Component {
   }
 
   onClicked(event) {
+    if (this.props.disabled) {
+      return;
+    }
+
     const position = {
       x: event.clientX,
       y: event.clientY,
@@ -64,9 +70,13 @@ class Equalizer extends Component {
   }
 
   render() {
+    const className = classnames('equalizer', {
+      'equalizer--disabled': this.props.disabled,
+    });
+
     return (
       <div
-        className='equalizer'
+        className={className}
         ref={(ref) => { this._equalizerElem = ref; }}
         onTouchStart={this.onStarted}
         onTouchMove={this.onChanged}

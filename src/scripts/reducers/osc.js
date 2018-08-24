@@ -27,7 +27,7 @@ export default function osc(state = initialState, action) {
       });
     case ActionTypes.OSC_ERROR:
       return update(state, {
-        errorMessage: { $set: action.error.message || '' },
+        errorMessage: { $set: action.error.message || action.error || '' },
         isError: { $set: true },
       });
     default:
