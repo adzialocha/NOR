@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { ToggleButton } from './';
-import { toggleStatus } from '../actions/controller';
+import { Equalizer, ToggleButton } from './';
+import { changeValues, toggleStatus } from '../actions/controller';
 
 class Controller extends Component {
   static propTypes = {
@@ -15,6 +15,7 @@ class Controller extends Component {
       reverb: PropTypes.bool.isRequired,
       eq: PropTypes.array.isRequired,
     }).isRequired,
+    changeValues: PropTypes.func.isRequired,
     toggleStatus: PropTypes.func.isRequired,
   }
 
@@ -22,10 +23,18 @@ class Controller extends Component {
     this.props.toggleStatus(id);
   }
 
+  onEqualizerChanged(start, end, value) {
+    this.props.changeValues(start, end, value);
+  }
+
   render() {
     return (
       <div className='controller'>
         <div className='controller__primary'>
+          <Equalizer
+            values={this.props.status.eq}
+            onChanged={this.onEqualizerChanged}
+          />
         </div>
 
         <div className='controller__secondary'>
@@ -79,6 +88,7 @@ class Controller extends Component {
   constructor(props) {
     super(props);
 
+    this.onEqualizerChanged = this.onEqualizerChanged.bind(this);
     this.onToggleClicked = this.onToggleClicked.bind(this);
   }
 }
@@ -91,6 +101,7 @@ function mapStateToProps(state) {
 
 export default connect(
   mapStateToProps, {
+    changeValues,
     toggleStatus,
   }
 )(Controller);

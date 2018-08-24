@@ -1,0 +1,19 @@
+.equalizer {
+  display: flex;
+
+  height: 100%;
+
+  justify-content: center;
+}
+
+.equalizer__value {
+  height: 100%;
+
+  background-color: $green;
+
+  flex: 1;
+}
+
+.equalizer__value-inner {
+  background-color: $gray-darker;
+}
