@@ -1,158 +1,109 @@
-var connect = require('connect');
-var serveStatic = require('serve-static');
-var dgram = require('dgram');
-var ws = require('ws');
-var fs = require('fs');
-var osc = require('osc-min');
+const fs = require('fs');
+const path = require('path');
 
-var MINUTE_IN_MS = 60000;
+const OSC = require('osc-js');
+const chalk = require('chalk');
+const express = require('express');
+const ip = require('ip');
 
-var RANDOM_VALUES = [ 25, 50, 100, 200, 250, 400, 800, 1600, 2500, 3000, 5000 ];
+const pkg = require('./package.json');
 
-var RANDOM_TIMER_MIN = 1000;
-var RANDOM_TIMER_MAX = MINUTE_IN_MS;
+class Server {
+  constructor(options) {
+    this.options = options;
 
-var STATIC_FOLDER = 'app';
-var HTTP_SERVER_PORT = 8080;
+    this.osc = new OSC({
+      plugin: new OSC.BridgePlugin(this.options),
+    });
 
-var WEBSOCKET_SERVER_PORT = 9000;
+    this.osc.on('error', error => {
+      console.error(`${chalk.red('✘')} osc error: ${error.message}`);
+    });
 
-var UDP_TARGET_SERVER_ADDRESS = '192.168.178.52';
-var UDP_TARGET_SERVER_PORT = 7500;
+    this.osc.on('open', () => {
+      console.log(`${chalk.green('✔')} osc bridge ready`);
+    });
 
-var websocketServer, udpClient;
+    this.httpServer = undefined;
+  }
 
-var sessionUserCounter, currentFrequency;
+  start() {
+    this.osc.open();
+  }
 
-function _log(sMessage) {
+  startHttp() {
+    const { port, host } = this.options.httpServer;
+    const staticPath = path.resolve(__dirname, this.options.staticFolderName);
 
-  var msg, date, hour, min, sec, time;
+    this.httpServer = express();
 
-  date = new Date();
-
-  hour = date.getHours();
-  hour = (hour < 10 ? '0' : '') + hour;
-
-  min  = date.getMinutes();
-  min = (min < 10 ? '0' : '') + min;
-
-  sec  = date.getSeconds();
-  sec = (sec < 10 ? '0' : '') + sec;
-
-  time = hour + ':' + min + ':' + sec;
-
-  msg = time + ' - ' + sMessage;
-
-  console.log(msg);
-
-  fs.appendFile('log.txt', msg + '\n');
-
-}
-
-// random frequency
-
-function getRandomFromArray(sArray) {
-  return sArray[Math.floor(Math.random() * sArray.length)];
-}
-
-function getRandom(sMin, sMax) {
-  return Math.round(Math.random() * (sMax - sMin) + sMin);
-}
-
-function broadcastFrequency(sFrequency) {
-
-  var message;
-
-  message = osc.toBuffer({
-    address: '/frequency',
-    args: [sFrequency]
-  });
-
-  sendToWebsockets(message);
-
-}
-
-function setNewFrequency() {
-
-  var nextFrequency;
-
-  nextFrequency = getRandomFromArray(RANDOM_VALUES);
-
-  currentFrequency = nextFrequency;
-  broadcastFrequency(nextFrequency);
-
-  _log('SET FREQUENCY TO ' + nextFrequency);
-
-  setTimeout(setNewFrequency, getRandom(RANDOM_TIMER_MIN, RANDOM_TIMER_MAX));
-
-}
-
-// websocket server
-
-websocketServer = new ws.Server({ port: WEBSOCKET_SERVER_PORT });
-
-websocketServer.on('connection', function(sData) {
-
-  sessionUserCounter++;
-
-  _log('NEW PARTICIPANT CONNECTED (total=' + sessionUserCounter + ')');
-
-  broadcastFrequency(currentFrequency);
-
-  sData.on('message', function(rMessage) {
-    sendToUdpServer(rMessage);
-  });
-
-  sData.on('close', function(rMessage) {
-    sessionUserCounter--;
-    _log('PARTICIPANT LEFT (total=' + sessionUserCounter + ', message=' + rMessage + ')');
-  });
-
-  sData.on('error', function(rError) {
-    _log('WS CLIENT ERROR (' + rError + ')');
-  });
-
-});
-
-function sendToWebsockets(sMessage) {
-  websocketServer.clients.forEach(function(eClient) {
-    eClient.send(sMessage, function(rError) {
-      if (rError) {
-        _log('WS SERVER ERROR (' + rError + ')');
+    fs.access(staticPath, err => {
+      if (!err) {
+        console.log(`${chalk.green('✔')} static folder found`);
+      } else {
+        console.log(`${chalk.red('✘')} static folder not found`);
       }
     });
-  });
+
+    this.httpServer.use(express.static(staticPath));
+
+    this.httpServer.listen(port, host, () => {
+      console.log(`${chalk.green('✔')} http server ready`);
+    });
+  }
+
+  stop() {
+    this.osc.close();
+  }
+
+  hello() {
+    const ipAddress = ip.address();
+    const { options } = this;
+
+    // Clear terminal
+    process.stdout.write('\x1Bc');
+
+    // Say hello!
+    console.log(chalk.bold.blue(pkg.name));
+    console.log('- - - - - - - - - - - - - - - - - - - - -');
+    console.log(`version: ${chalk.green(pkg.version)}`);
+    console.log(`ip: ${chalk.green(ipAddress)}`);
+    console.log('- - - - - - - - - - - - - - - - - - - - -');
+
+    if (this.httpServer) {
+      console.log(chalk.bold('http'));
+      console.log('  server');
+      console.log(`    host: ${chalk.green(options.httpServer.host)}`);
+      console.log(`    port: ${chalk.green(options.httpServer.port)}`);
+    }
+
+    console.log(chalk.bold('udp'));
+    console.log('  client');
+    console.log(`    host: ${chalk.green(options.udpClient.host)}`);
+    console.log(`    port: ${chalk.green(options.udpClient.port)}`);
+    console.log('  server');
+    console.log(`    host: ${chalk.green(options.udpServer.host)}`);
+    console.log(`    port: ${chalk.green(options.udpServer.port)}`);
+    console.log(chalk.bold('websocket'));
+    console.log('  server');
+    console.log(`    host: ${chalk.green(options.wsServer.host)}`);
+    console.log(`    port: ${chalk.green(options.wsServer.port)}`);
+    console.log('- - - - - - - - - - - - - - - - - - - - -');
+  }
 }
 
-// udp server
+function startStaticServer() {
+  const options = require('./options');
+  const server = new Server(options);
 
-udpClient = dgram.createSocket('udp4');
+  server.start();
+  server.startHttp();
 
-udpClient.on('error', function(rError) {
-  _log('UDP ERROR (' + rError + ')');
-});
-
-function sendToUdpServer(sMessage) {
-  udpClient.send(sMessage, 0, sMessage.length, UDP_TARGET_SERVER_PORT, UDP_TARGET_SERVER_ADDRESS, function(rError) {
-        if (rError) {
-          _log('UDP ERROR (' + rError + ')');
-        }
-      }
-  );
+  server.hello();
 }
 
-// go
+if (require.main === module) {
+  startStaticServer();
+}
 
-_log('NOR #1');
-
-// start http server
-
-connect().use(serveStatic(__dirname + '/' + STATIC_FOLDER)).listen(HTTP_SERVER_PORT);
-
-// start timer
-
-setNewFrequency();
-
-// set initial values
-
-sessionUserCounter = 0;
+module.exports = Server;
