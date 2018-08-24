@@ -17,8 +17,8 @@ window.onbeforeunload = () => {
   store.dispatch(unloadApp());
 };
 
-window.addEventListener('orientationchange', () => {
-  const orientation = screen.msOrientation || (screen.orientation || screen.mozOrientation || {}).type;
+window.addEventListener('resize', () => {
+  const orientation = window.innerWidth < window.innerHeight ? 'portrait' : 'landscape';
   store.dispatch(changeOrientation(orientation));
 });
 
