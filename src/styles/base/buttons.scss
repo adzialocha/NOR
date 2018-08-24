@@ -23,8 +23,8 @@ input[type="submit"] {
 
   cursor: pointer;
 
-  &:hover {
-    opacity: .7;
+  &.button--active {
+    background-color: $blue;
   }
 
   &[disabled] {
@@ -36,55 +36,26 @@ input[type="submit"] {
   }
 }
 
-.button--gray {
-  background-color: $gray;
-}
-
 .button--red {
-  background-color: $red;
+  &.button--active {
+    background-color: $red;
+  }
 }
 
 .button--green {
-  background-color: $green;
+  &.button--active {
+    background-color: $green;
+  }
+}
+
+.button--yellow {
+  &.button--active {
+    background-color: $yellow;
+  }
 }
 
 .button--blue {
-  background-color: $blue;
-}
-
-.button--clear {
-  background-color: transparent;
-
-  &.button--gray {
-    color: $gray-light;
+  &.button--active {
+    background-color: $blue;
   }
-
-  &.button--red {
-    color: $red;
-  }
-
-  &.button--green {
-    color: $green;
-  }
-
-  &.button--blue {
-    color: $blue;
-  }
-
-  &[disabled] {
-    color: $gray-darker;
-
-    background-color: transparent;
-  }
-}
-
-.button--round {
-  display: block;
-
-  width: 3rem;
-  height: 3rem;
-
-  padding: 0;
-
-  border-radius: 50%;
 }

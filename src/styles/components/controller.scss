@@ -1,0 +1,20 @@
+.controller {
+  display: flex;
+
+  height: 100%;
+
+  flex-direction: column;
+}
+
+.controller__primary,
+.controller__secondary {
+  height: 50%;
+}
+
+.controller__secondary {
+  display: flex;
+}
+
+.controller__toggle-button {
+  flex: 1;
+}
