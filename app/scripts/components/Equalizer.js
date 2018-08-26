@@ -78,13 +78,13 @@ class Equalizer extends Component {
       <div
         className={className}
         ref={(ref) => { this._equalizerElem = ref; }}
-        onTouchStart={this.onStarted}
-        onTouchMove={this.onChanged}
-        onTouchEnd={this.onEnded}
         onClick={this.onClicked}
         onMouseDown={this.onStarted}
         onMouseMove={this.onChanged}
         onMouseUp={this.onEnded}
+        onTouchEnd={this.onEnded}
+        onTouchMove={this.onChanged}
+        onTouchStart={this.onStarted}
       >
         { this.renderValues() }
       </div>
@@ -102,7 +102,8 @@ class Equalizer extends Component {
     position.x -= rect.x;
     position.y -= rect.y;
 
-    const index = Math.ceil(Math.min(1.0, Math.max(0.0, position.x / rect.width)) * (EQ_BIN_NUM - 1));
+    const index = Math.ceil(
+      Math.min(1.0, Math.max(0.0, position.x / rect.width)) * (EQ_BIN_NUM - 1));
     const value = Math.min(1.0, Math.max(0.0, 1.0 - (position.y / rect.height)));
 
     return { index, value };

@@ -11,7 +11,7 @@ function getPath(filePath) {
 }
 
 const ASSETS_NAME = 'app';
-const ASSETS_PATH = getPath('src');
+const ASSETS_PATH = getPath('app');
 
 module.exports = (env, options) => {
   const isProduction = options.mode === 'production';

@@ -14,8 +14,8 @@ export function changeSession(args) {
     };
   } else if (key === 'takeover') {
     return {
-      type: ActionTypes.SESSION_CHANGE_TAKEOVER_ACTIVE,
-      value: value === 1,
+      type: ActionTypes.SESSION_CHANGE_TAKEOVER,
+      value,
     };
   }
 }

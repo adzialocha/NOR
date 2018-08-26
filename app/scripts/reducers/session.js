@@ -5,7 +5,7 @@ import ActionTypes from '../actionTypes';
 const initialState = {
   chaosRate: 0,
   isRainbowMode: false,
-  isTakeoverActive: false,
+  takeoverMode: 'disabled',
 };
 
 export default function session(state = initialState, action) {
@@ -18,9 +18,9 @@ export default function session(state = initialState, action) {
       return update(state, {
         isRainbowMode: { $set: action.value },
       });
-    case ActionTypes.SESSION_CHANGE_TAKEOVER_ACTIVE:
+    case ActionTypes.SESSION_CHANGE_TAKEOVER:
       return update(state, {
-        isTakeoverActive: { $set: action.value },
+        takeoverMode: { $set: action.value },
       });
     default:
       return state;

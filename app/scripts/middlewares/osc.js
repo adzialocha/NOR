@@ -61,7 +61,9 @@ function handleAction(store, type) {
       if (!state.settings.id) {
         store.dispatch({
           type: ActionTypes.OSC_ERROR,
-          error: 'Please enter your ID',
+          error: {
+            message: 'Please enter your ID',
+          },
         });
         return;
       }

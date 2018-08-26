@@ -11,6 +11,11 @@ import { initializeApp, unloadApp } from './actions/app';
 
 const store = configureStore();
 
+function checkOrientation() {
+  const orientation = window.innerWidth < window.innerHeight ? 'portrait' : 'landscape';
+  store.dispatch(changeOrientation(orientation));
+}
+
 store.dispatch(initializeApp());
 
 window.onbeforeunload = () => {
@@ -18,9 +23,10 @@ window.onbeforeunload = () => {
 };
 
 window.addEventListener('resize', () => {
-  const orientation = window.innerWidth < window.innerHeight ? 'portrait' : 'landscape';
-  store.dispatch(changeOrientation(orientation));
+  checkOrientation();
 });
+
+checkOrientation();
 
 render(
   <Provider store={store}>

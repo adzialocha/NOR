@@ -18,8 +18,6 @@ class Controller extends Component {
     changeValues: PropTypes.func.isRequired,
     chaosRate: PropTypes.number.isRequired,
     isDisabled: PropTypes.bool.isRequired,
-    isRainbowMode: PropTypes.bool.isRequired,
-    isTakeoverActive: PropTypes.bool.isRequired,
     toggleStatus: PropTypes.func.isRequired,
   }
 
@@ -32,20 +30,15 @@ class Controller extends Component {
   }
 
   render() {
-    const chaosColor = this.props.isRainbowMode ? 'rainbow' : 'red';
-    let chaosLabel = this.props.isRainbowMode ? 'TAKEOVER' : 'CHAOS';
-
-    if (this.props.chaosRate) {
-      chaosLabel += ' ' + this.props.chaosRate;
-    }
+    const percentage = Math.round(this.props.chaosRate * 100);
+    const chaosLabel = `${percentage}% CHAOS`;
 
     return (
       <div className='controller'>
         <div className='controller__primary'>
           <Equalizer
+            disabled={this.props.isDisabled}
             values={this.props.controls.eq}
-            disabled={this.props.isDisabled || this.props.isTakeoverActive}
-            takeoverMode={this.props.isTakeoverActive}
             onChanged={this.onEqualizerChanged}
           />
         </div>
@@ -93,7 +86,7 @@ class Controller extends Component {
             className='controller__toggle-button'
             disabled={this.props.isDisabled}
             id='chaos'
-            color={chaosColor}
+            color='red'
             isActive={this.props.controls.chaos}
             label={chaosLabel}
             onClicked={this.onToggleClicked}
@@ -114,16 +107,12 @@ class Controller extends Component {
 function mapStateToProps(state) {
   const {
     chaosRate,
-    isRainbowMode,
-    isTakeoverActive,
   } = state.session;
 
   return {
     chaosRate,
     controls: state.controller,
     isDisabled: !state.osc.isOpen,
-    isRainbowMode,
-    isTakeoverActive,
   };
 }
 

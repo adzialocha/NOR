@@ -8,5 +8,5 @@
 
   z-index: map-get($z-index, "view");
 
-  overflow: auto;
+  overflow: hidden;
 }

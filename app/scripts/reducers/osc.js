@@ -26,8 +26,9 @@ export default function osc(state = initialState, action) {
         isOpen: { $set: false },
       });
     case ActionTypes.OSC_ERROR:
+      console.log(action.error);
       return update(state, {
-        errorMessage: { $set: action.error.message || action.error || '' },
+        errorMessage: { $set: action.error.message || '' },
         isError: { $set: true },
       });
     default:

@@ -4,7 +4,7 @@ import { send } from '../actions/osc';
 
 export function changeValues(start, end, value) {
   return dispatch => {
-    dispatch(send(['controller', 'eq'], value, start, end));
+    dispatch(send('controller', 'eq', value, start, end));
 
     dispatch({
       end,
@@ -24,7 +24,7 @@ export function toggleStatus(name) {
 
 export function setStatus(name, value) {
   return dispatch => {
-    dispatch(send(['controller', name], value ? 1 : 0));
+    dispatch(send('controller', name, value ? 1 : 0));
 
     dispatch({
       type: ActionTypes.CONTROLLER_SET_STATUS,
@@ -39,5 +39,5 @@ export function changeController(args) {
   if (key === 'eq') {
     return changeValues(args[2], args[3], value);
   }
-  return setStatus(key, value);
+  return setStatus(key, value === 1);
 }

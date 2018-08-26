@@ -2,7 +2,7 @@ import update from 'immutability-helper';
 
 import ActionTypes from '../actionTypes';
 
-export const EQ_BIN_NUM = 512;
+export const EQ_BIN_NUM = 128;
 
 const initialState = {
   chaos: false,
