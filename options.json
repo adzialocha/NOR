@@ -1,0 +1,17 @@
+{
+  "static": {
+    "host": "0.0.0.0",
+    "port": 3000,
+    "staticFolderName": "../dist"
+  },
+  "session": {
+    "udpClient": {
+      "host": "localhost",
+      "port": 13999
+    },
+    "wsServer": {
+      "host": "localhost",
+      "port": 9789
+    }
+  }
+}

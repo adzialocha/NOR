@@ -1,0 +1,92 @@
+@keyframes rainbow {
+  0% { background-color: $blue; }
+  33% { background-color: $green; }
+  66% { background-color: $yellow; }
+  100% { background-color: $red; }
+}
+
+.button,
+button,
+input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+  display: inline-block;
+
+  padding: $default-spacing;
+
+  border: 0;
+
+  white-space: nowrap;
+
+  color: $button-color;
+
+  background-color: $button-background-color;
+
+  font-weight: $font-weight-bold;
+
+  outline: 0;
+
+  text-align: center;
+
+  cursor: pointer;
+
+  &.button--active {
+    background-color: $blue;
+  }
+
+  &[disabled] {
+    color: $button-disabled-color;
+
+    background-color: $button-disabled-background-color;
+
+    cursor: default;
+
+    &.button--active {
+      background-color: $button-disabled-background-color;
+    }
+  }
+}
+
+.button--red {
+  &.button--active {
+    background-color: $red;
+  }
+}
+
+.button--green {
+  &.button--active {
+    background-color: $green;
+  }
+}
+
+.button--rainbow {
+  animation-name: rainbow;
+  animation-duration: 5s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+
+  opacity: .1;
+
+  &.button--active {
+    opacity: 1;
+  }
+
+  &[disabled] {
+    opacity: 1;
+
+    animation: none;
+  }
+}
+
+.button--yellow {
+  &.button--active {
+    background-color: $yellow;
+  }
+}
+
+.button--blue {
+  &.button--active {
+    background-color: $blue;
+  }
+}
