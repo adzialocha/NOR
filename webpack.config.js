@@ -19,7 +19,7 @@ module.exports = (env, options) => {
   return {
     entry: getPath(`${ASSETS_PATH}/scripts/index.js`),
     output: {
-      filename: `${ASSETS_NAME}.js`,
+      filename: `${ASSETS_NAME}-[hash].js`,
       path: getPath('./dist'),
     },
     resolve: {
@@ -98,7 +98,7 @@ module.exports = (env, options) => {
         ],
       }),
       new MiniCssExtractPlugin({
-        filename: `${ASSETS_NAME}.css`,
+        filename: `${ASSETS_NAME}-[hash].css`,
       }),
     ],
     devtool: isProduction ? false : 'source-map',
