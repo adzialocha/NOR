@@ -6,7 +6,7 @@ import { getItem, setItem, hasItem } from '../services/storage';
 const STORAGE_KEY = 'settings';
 
 const initialState = {
-  host: 'localhost',
+  host: '1.1.1.100',
   port: 9789,
   id: '',
 };
