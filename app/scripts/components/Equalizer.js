@@ -5,6 +5,8 @@ import classnames from 'classnames';
 import { EQ_BIN_NUM } from '../reducers/controller';
 import { EqualizerValue } from './';
 
+const DOUBLE_CLICK_DURATION = 200;
+
 class Equalizer extends Component {
   static propTypes = {
     disabled: PropTypes.bool.isRequired,
@@ -18,17 +20,22 @@ class Equalizer extends Component {
     }
 
     event.preventDefault();
-    event.stopPropagation();
 
-    const position = {
-      x: event.targetTouches[0].clientX,
-      y: event.targetTouches[0].clientY,
-    };
+    const now = Date.now();
 
-    const { index, value } = this.getIndexAndValue(position);
-    this.props.onChanged(index, index, value);
+    if (now - this.state.lastStart < DOUBLE_CLICK_DURATION) {
+      this.props.onChanged(0, EQ_BIN_NUM, 0);
+    } else {
+      const position = {
+        x: event.targetTouches[0].clientX,
+        y: event.targetTouches[0].clientY,
+      };
 
-    this.setState({ isActive: true });
+      const { index, value } = this.getIndexAndValue(position);
+      this.props.onChanged(index, index, value);
+    }
+
+    this.setState({ isActive: true, lastStart: now });
   }
 
   onChanged(event) {
@@ -37,7 +44,6 @@ class Equalizer extends Component {
     }
 
     event.preventDefault();
-    event.stopPropagation();
 
     const position = {
       x: event.targetTouches[0].clientX,
@@ -63,7 +69,6 @@ class Equalizer extends Component {
 
   onEnded(event) {
     event.preventDefault();
-    event.stopPropagation();
 
     this.setState({
       isActive: false,
@@ -113,6 +118,7 @@ class Equalizer extends Component {
     this.state = {
       isActive: false,
       lastIndex: undefined,
+      lastStart: 0,
     };
 
     this.onStarted = this.onStarted.bind(this);

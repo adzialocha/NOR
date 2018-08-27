@@ -13,19 +13,19 @@
 .equalizer__value {
   height: 100%;
 
-  background-color: $green;
-
   flex: 1;
 }
 
 .equalizer--disabled {
   opacity: .5;
 
-  .equalizer__value {
+  .equalizer__value-inner {
     background-color: $gray;
   }
 }
 
 .equalizer__value-inner {
-  background-color: $gray-darker;
+  height: 100%;
+
+  background-color: $green;
 }

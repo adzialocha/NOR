@@ -10,7 +10,7 @@ class EqualizerValue extends Component {
     const percentage = Math.floor(
       Math.max(Math.min(1.0, 1.0 - this.props.value), 0.0) * 100
     );
-    const style = { height: `${percentage}%` };
+    const style = { transform: `translate3d(0, ${percentage}%, 0)` };
 
     return (
       <div className='equalizer__value'>
