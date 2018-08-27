@@ -87,10 +87,13 @@ module.exports = (env, options) => {
         short_name: pkg.name,
         description: pkg.description,
         background_color: '#000000',
+        display: 'fullscreen',
+        ios: true,
         icons: [
           {
             src: getPath(`${ASSETS_PATH}/images/icon.png`),
             sizes: [96, 128, 192, 256, 384, 512],
+            ios: true,
           },
         ],
       }),
