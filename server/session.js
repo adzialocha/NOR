@@ -98,6 +98,10 @@ class SessionServer {
     const id = message.args.pop();
     const name = message.args[0];
 
+    if (Object.keys(this.clients).find(key => this.clients[key].name === name)) {
+      this.onError(`participant with name ${chalk.red(name)} already exists!`);
+    }
+
     this.clients[id] = {
       id,
       name,
