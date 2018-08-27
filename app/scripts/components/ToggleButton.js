@@ -13,7 +13,10 @@ class ToggleButton extends Component {
     onClicked: PropTypes.func.isRequired,
   }
 
-  onClicked() {
+  onClicked(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
     this.props.onClicked(this.props.id);
   }
 
@@ -27,7 +30,7 @@ class ToggleButton extends Component {
       <button
         className={className}
         disabled={this.props.disabled}
-        onClick={this.onClicked}
+        onTouchStart={this.onClicked}
       >
         { this.props.label }
       </button>

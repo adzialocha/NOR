@@ -13,6 +13,21 @@ class Equalizer extends Component {
   }
 
   onStarted(event) {
+    if (this.props.disabled) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const position = {
+      x: event.targetTouches[0].clientX,
+      y: event.targetTouches[0].clientY,
+    };
+
+    const { index, value } = this.getIndexAndValue(position);
+    this.props.onChanged(index, index, value);
+
     this.setState({ isActive: true });
   }
 
@@ -21,15 +36,13 @@ class Equalizer extends Component {
       return;
     }
 
-    const position = { x: 0, y: 0 };
+    event.preventDefault();
+    event.stopPropagation();
 
-    if ('targetTouches' in event) {
-      position.x = event.targetTouches[0].clientX;
-      position.y = event.targetTouches[0].clientY;
-    } else {
-      position.x = event.clientX;
-      position.y = event.clientY;
-    }
+    const position = {
+      x: event.targetTouches[0].clientX,
+      y: event.targetTouches[0].clientY,
+    };
 
     const { index, value } = this.getIndexAndValue(position);
 
@@ -48,21 +61,10 @@ class Equalizer extends Component {
     this.props.onChanged(rangeStart, rangeEnd, value);
   }
 
-  onClicked(event) {
-    if (this.props.disabled) {
-      return;
-    }
-
-    const position = {
-      x: event.clientX,
-      y: event.clientY,
-    };
-
-    const { index, value } = this.getIndexAndValue(position);
-    this.props.onChanged(index, index, value);
-  }
-
   onEnded(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
     this.setState({
       isActive: false,
       lastIndex: undefined,
@@ -78,10 +80,6 @@ class Equalizer extends Component {
       <div
         className={className}
         ref={(ref) => { this._equalizerElem = ref; }}
-        onClick={this.onClicked}
-        onMouseDown={this.onStarted}
-        onMouseMove={this.onChanged}
-        onMouseUp={this.onEnded}
         onTouchEnd={this.onEnded}
         onTouchMove={this.onChanged}
         onTouchStart={this.onStarted}
@@ -99,8 +97,8 @@ class Equalizer extends Component {
 
   getIndexAndValue(position) {
     const rect = this._equalizerElem.getBoundingClientRect();
-    position.x -= rect.x;
-    position.y -= rect.y;
+    position.x -= rect.left;
+    position.y -= rect.top;
 
     const index = Math.ceil(
       Math.min(1.0, Math.max(0.0, position.x / rect.width)) * (EQ_BIN_NUM - 1));
@@ -117,7 +115,6 @@ class Equalizer extends Component {
       lastIndex: undefined,
     };
 
-    this.onClicked = this.onClicked.bind(this);
     this.onStarted = this.onStarted.bind(this);
     this.onEnded = this.onEnded.bind(this);
     this.onChanged = this.onChanged.bind(this);

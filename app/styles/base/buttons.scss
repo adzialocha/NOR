@@ -28,6 +28,8 @@ input[type="submit"] {
 
   text-align: center;
 
+  user-select: none;
+
   cursor: pointer;
 
   &.button--active {

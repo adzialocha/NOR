@@ -26,6 +26,10 @@ window.addEventListener('resize', () => {
   checkOrientation();
 });
 
+document.body.addEventListener('touchmove', event => {
+  event.preventDefault(); // ios momentum scroll hack
+}, false);
+
 checkOrientation();
 
 render(
