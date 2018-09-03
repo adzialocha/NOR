@@ -17,7 +17,7 @@ const TICK_RATE = 10;
 
 const MIN_CHAOS = 5;
 const MAX_CHAOS = 50;
-const NEXT_CHAOS_PROPABILITY = 0.0001;
+const NEXT_CHAOS_PROPABILITY = 0.001;
 
 function randomRange(min, max) {
   return Math.floor(min + (Math.random() * (max - min)));
