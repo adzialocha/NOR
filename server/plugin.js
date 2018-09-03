@@ -49,8 +49,9 @@ class WebsocketServerPlugin {
     });
 
     this.socket.on('connection', (client) => {
-      client.id = this.connections;
       this.connections += 1;
+      const customId = this.connections.toString();
+      client.id = customId;
 
       client.on('close', () => {
         const message = new OSC.Message('goodbye', client.id);
@@ -60,8 +61,7 @@ class WebsocketServerPlugin {
       client.on('message', (data) => {
         const message = new OSC.Message();
         message.unpack(new DataView(new Uint8Array(data).buffer));
-        message.add(client.id);
-
+        message.add(customId);
         this.notify(message);
       });
     });
