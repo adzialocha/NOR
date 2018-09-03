@@ -88,6 +88,7 @@ module.exports = (env, options) => {
         description: pkg.description,
         background_color: '#000000',
         display: 'fullscreen',
+        orientation: 'any',
         ios: true,
         icons: [
           {
